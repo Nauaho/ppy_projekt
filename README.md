@@ -1,2 +1,2 @@
 # ppy_projekt
-AAAAAAAAAAAAAAAAAAA
+Zwykły projekt bazo-danowy na Python i sqlite3
