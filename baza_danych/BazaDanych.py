@@ -1,10 +1,10 @@
+from . import hasher 
 import sqlite3
-import hasher
 
 class BazaDanych:
 
     def __init__(self, bd):
-        bd = bd
+        self.bd = bd
     
     def zarejestruj_sie(self, login, haslo):
         uzytkownik = self.__uzytkownik_o_takim_loginie(login)
@@ -14,7 +14,7 @@ class BazaDanych:
         self.bd.execute(sql, hasher.uzytkownik_sol_i_haslo(login, haslo))
         return login
 
-    def login(self, login, haslo):
+    def zaloguj_sie(self, login, haslo):
         uzytkownik = self.__uzytkownik_o_takim_loginie(login)
         if(uzytkownik == None):
             return None
@@ -28,8 +28,10 @@ class BazaDanych:
 
     def __uzytkownik_o_takim_loginie(self, login):
         sql = "SELECT * FROM Uzytkownicy WHERE login = ?;" 
-        self.bd.execute(sql, (login))
-        user = self.bd.fetchall()
+        login = (login,)
+        cursor = self.bd.cursor()
+        cursor.execute(sql, login)
+        user = cursor.fetchall()
         if(len(user) == 0):
             return None
         else:

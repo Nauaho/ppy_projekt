@@ -1,4 +1,5 @@
 import sqlite3
+from . import wypelnienie
 
 tworzenie = """
     --sql
@@ -46,8 +47,9 @@ tworzenie = """
     """
 
 def init(name):
-
     bd = sqlite3.connect(name)
+    bd.row_factory = sqlite3.Row
     bd.executescript(tworzenie)
-   
+    wypelnienie.seed(bd)
+
     return bd

@@ -1,5 +1,5 @@
 import sqlite3
-import BazaDanych
+from .BazaDanych import BazaDanych
 
 uzytkownicy = (
     ('admin', '1234'),    
@@ -8,8 +8,8 @@ uzytkownicy = (
 )
 
 adminy =(
-    ('admin'),
-    ('ola')
+    ('admin',),
+    ('ola',)
 )
 
 priorytety = (
@@ -26,8 +26,11 @@ statusy = (
 
 def seed(bd):
     
-    bd.executemany("INSERT INTO Uzytkownicy VALUES (?,?,?);", uzytkownicy)
+    interface = BazaDanych(bd)
+    for u in uzytkownicy:
+        interface.zarejestruj_sie(u[0], u[1])
     bd.executemany("INSERT INTO Adminy VALUES (?);", adminy)
     bd.executemany("INSERT INTO Priorytety VALUES (?,?);", priorytety)
     bd.executemany("INSERT INTO Statusy VALUES (?,?);", statusy)
+    bd.commit()
 
