@@ -25,12 +25,16 @@ tworzenie = """
         haslo varchar(64) NOT NULL
     );
 
-    CREATE TABLE IF NOT EXISTS Zadnia (
+    CREATE TABLE IF NOT EXISTS Zadania (
         id integer NOT NULL CONSTRAINT Zadnia_pk PRIMARY KEY,
         status integer NOT NULL,
         priorytet integer NOT NULL,
         uzytkownik varchar(100) NOT NULL,
-        admin varchar(100),
+        [admin] varchar(100),
+        tytul varchar(100),
+        opis varchar(300),
+        data_utworzenia datetime,
+        deadline datetime,
         CONSTRAINT Zadnia_Statusy FOREIGN KEY (status)
         REFERENCES Statusy (id),
         CONSTRAINT Zadnia_Priorytety FOREIGN KEY (priorytet)

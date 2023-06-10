@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 from . import hasher
 
 
@@ -25,6 +26,13 @@ statusy = (
     (None,"zakończone"),
 )
 
+zadania = (
+    ( None, 1, 1, 'nazar', 'ola', 'Backend', 'Zrób zwykły backend z wygodnym interfacem, albo zabiję',datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(days=1)),
+    ( None, 2, 2, 'ola', 'admin', 'Frontend', 'Zrób zwykły frontend z wygodnym GUI :3 ',datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(weeks=1)),
+    ( None, 3, 1, 'nazar', 'admin', 'Kup Plecak', 'Kup Plecak zrobiony ze złota',datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(days=2)),
+    ( None, 4, 3, 'nazar', None, 'Sprobować sushi', 'Chcę sushi',datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(hours=1)),
+    ( None, 5, 2, 'admin', None, 'Kupić nową koszulkę', 'Kupić fajną koszulkę z Pink Floyd',datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(weeks=4)))
+
 def seed(bd):
     for u in uzytkownicy:
         bd.execute("INSERT INTO Uzytkownicy VALUES (?,?,?);", 
@@ -32,5 +40,6 @@ def seed(bd):
     bd.executemany("INSERT INTO Adminy VALUES (?);", adminy)
     bd.executemany("INSERT INTO Priorytety VALUES (?,?);", priorytety)
     bd.executemany("INSERT INTO Statusy VALUES (?,?);", statusy)
+    bd.executemany("INSERT INTO Zadania VALUES (?,?,?,?,?,?,?,?,?);",zadania)
     bd.commit()
 
