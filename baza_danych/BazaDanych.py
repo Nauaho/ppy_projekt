@@ -1,5 +1,6 @@
 from baza_danych import hasher, tworzenie
 import sqlite3
+import datetime
 
 class BazaDanych:
 
@@ -57,3 +58,33 @@ class BazaDanych:
             return "Zadania o takim identyfikatorze nie istnieje"
         else:
             return "Zadanie zostało usunięte"
+        
+    def dodaj_zadanie(self, login, tytul, opis,
+                    admin = None,
+                    status = 'do zrobienia',
+                    priorytet = 'średni',
+                    data_utworzenia = datetime.datetime.now(),
+                    deadline = datetime.datetime.now() + datetime.timedelta(days = 1)):
+        try:
+            zadanie = (None, 
+                    status, priorytet,
+                    login, admin,
+                    tytul, opis,
+                    data_utworzenia, deadline)
+            sql = """--sql
+                INSERT INTO Zadania 
+                VALUES( ?, 
+                        (SELECT id FROM Statusy WHERE status = ?),
+                        (SELECT id FROM Priorytety WHERE priorytet = ?),
+                        ?,?,?,?,?,?);
+                """
+            c = self.bd.execute(sql, zadanie)
+            return c.lastrowid
+        except sqlite3.IntegrityError as e:
+            if('Zadania.status' in e.args[0]):
+                return f'Nie istnieje takiego statusa, jak "{status}"'
+            elif("Zadania.priorytet" in e.args[0]):
+                return f'Nie istnieje takiego prioryteta, jak "{priorytet}"'
+            else:
+                return 'Problem wewnętrzny, sorky'
+        

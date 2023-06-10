@@ -27,7 +27,7 @@ tworzenie = """
 
     CREATE TABLE IF NOT EXISTS Zadania (
         id integer NOT NULL CONSTRAINT Zadnia_pk PRIMARY KEY,
-        status integer NOT NULL,
+        [status] integer NOT NULL,
         priorytet integer NOT NULL,
         uzytkownik varchar(100) NOT NULL,
         [admin] varchar(100),
