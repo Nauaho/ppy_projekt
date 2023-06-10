@@ -49,6 +49,10 @@ tworzenie = """
 def init(name):
     bd = sqlite3.connect(name)
     bd.row_factory = sqlite3.Row
+    cursor = bd.cursor()
+    cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table'; ''')
+    if (cursor.fetchone()[0] == 5):
+        return bd   
     bd.executescript(tworzenie)
     wypelnienie.seed(bd)
 

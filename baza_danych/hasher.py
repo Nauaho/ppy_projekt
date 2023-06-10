@@ -14,4 +14,5 @@ def __daj_mi_sol():
     return solka
 
 def weryfikuj_haslo(sol, haslo, haslo_haszowane):
-    return hashlib.sha256(sol.join(haslo).encode()) == haslo_haszowane;
+    material = sol.join(haslo).encode()
+    return hashlib.sha256(material).hexdigest() == haslo_haszowane;

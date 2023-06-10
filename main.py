@@ -1,9 +1,11 @@
-from baza_danych import tworzenie, wypelnienie, hasher
+from baza_danych.BazaDanych import BazaDanych
 
-bd = tworzenie.init("baza_danych\\dane\\dane.db")
+path = "baza_danych\\dane\\dane.db"
 
+db = BazaDanych(path)
 
-print(hasher.uzytkownik_sol_i_haslo('nazar', '23423'))
-
+# result = db.zaloguj_sie(input('Login: '), input('Haslo: '));
+result = db.zaloguj_sie('nazar', '1234')
+print(result)
 
 

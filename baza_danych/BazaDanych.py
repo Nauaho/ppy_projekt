@@ -1,10 +1,10 @@
-from . import hasher 
+from baza_danych import hasher, tworzenie
 import sqlite3
 
 class BazaDanych:
 
-    def __init__(self, bd):
-        self.bd = bd
+    def __init__(self, path):
+        self.bd = tworzenie.init(path)
     
     def zarejestruj_sie(self, login, haslo):
         uzytkownik = self.__uzytkownik_o_takim_loginie(login)
@@ -18,9 +18,9 @@ class BazaDanych:
         uzytkownik = self.__uzytkownik_o_takim_loginie(login)
         if(uzytkownik == None):
             return None
-        sol = uzytkownik[0]['sol']
-        login = uzytkownik[0]['login']
-        haslo_haszowane = sol = uzytkownik[0]['haslo']
+        login = uzytkownik[0]
+        sol = uzytkownik[1]
+        haslo_haszowane = uzytkownik[2]
         if(hasher.weryfikuj_haslo(sol, haslo, haslo_haszowane)):
             return login
         else:
