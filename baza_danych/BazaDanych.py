@@ -28,6 +28,7 @@ class BazaDanych:
             return None
         sql = "INSERT INTO Uzytkownicy VALUES(?,?,?);"
         self.bd.execute(sql, hasher.uzytkownik_sol_i_haslo(login, haslo))
+        self.bd.commit()
         return login
 
     def zaloguj_sie(self, login, haslo):
@@ -48,6 +49,8 @@ class BazaDanych:
         cursor = self.bd.cursor()
         cursor.execute(sql, login)
         user = cursor.fetchall()
+        cursor.close()
+        self.bd.commit()
         if(len(user) == 0):
             return None
         else:
@@ -59,16 +62,35 @@ class BazaDanych:
         cursor = self.bd.cursor()
         cursor.execute(sql, login)
         admin = cursor.fetchall()
+        self.bd.commit()
+        cursor.close()
         if(len(admin) == 0):
             return None
         else:
             return admin[0][0]
-        
+    
+    def dodaj_admina(self, login, login_nowego_admina, ):
+        if(login != self.admin_o_takim_loginie(login)):
+            return "Nie masz uprawnień do dodawania nowych adminów: nie jesteś adminem"
+        if(login_nowego_admina != self.__uzytkownik_o_takim_loginie(login_nowego_admina)[0]):
+            return f"Nie istenieje użytkownika o loginie '{login_nowego_admina}'"
+        if(self.admin_o_takim_loginie(login_nowego_admina) == login_nowego_admina):
+            return f"Użytkownik '{login_nowego_admina}' już ma uprawnienia admina"
+        sql = "INSERT INTO Adminy VALUES (?);"
+        c = self.bd.execute(sql,(login_nowego_admina,))
+        self.bd.commit()
+        c.close()
+        if(c.rowcount == 1):
+            return f"Użutkownik '{login_nowego_admina}' został adminem"
+        else:
+            return f"Węwnętrzny problem, użutkownik '{login_nowego_admina}' nie został adminem"
+
     def usun_zadanie(self,id):
         sql = "DELETE FROM Zadania WHERE id = ?;"
         id = (id,)
         c = self.bd.execute(sql, id)
         self.bd.commit()
+        c.close()
         if(c.rowcount == 0):
             return "Zadania o takim identyfikatorze nie istnieje"
         else:
@@ -94,8 +116,11 @@ class BazaDanych:
                         ?,?,?,?,?,?);
                 """
             c = self.bd.execute(sql, zadanie)
+            self.bd.commit()
+            c.close()
             return c.lastrowid
         except sqlite3.IntegrityError as e:
+            self.bd.rollback()
             if('Zadania.status' in e.args[0]):
                 return f'Nie istnieje takiego statusa, jak "{status}"'
             elif("Zadania.priorytet" in e.args[0]):
@@ -103,7 +128,7 @@ class BazaDanych:
             else:
                 return 'Problem wewnętrzny, sorky'
     
-    def daj_zadania(self, login, predykat):
+    def daj_zadania(self, login, sortowanie = lambda a,b: True if(a.tytul>=b.tytul) else False,predykat = None ):
         sql = """--sql 
             SELECT z.id, s.status, p.priorytet, z.admin, z.tytul, z.opis, z.data_utworzenia, z.deadline
             FROM Zadania z 
@@ -114,5 +139,13 @@ class BazaDanych:
         cursor.execute(sql, (login,))
         zadania = [Zadanie(t) for t in list(map(ZadanieKratka._make, cursor.fetchall()))]
         zadania = list(filter(predykat, zadania))
+        for i in range(0, len(zadania)-1):
+            for j in range(0, len(zadania)-1):
+                if(sortowanie(zadania[j], zadania[j+1])):
+                    a = zadania[j]
+                    zadania[j] = zadania[j + 1]
+                    zadania[j + 1] = a
+        self.bd.commit()
+        cursor.close()
         return zadania
         
