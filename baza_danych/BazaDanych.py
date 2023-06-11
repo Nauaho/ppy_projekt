@@ -1,6 +1,21 @@
 from baza_danych import hasher, tworzenie
 import sqlite3
 import datetime
+import collections
+
+ZadanieKratka = collections.namedtuple("Zadanie", ["id","status","priorytet","admin",
+                                                 "tytul","opis","data_utworzenia","deadline"])
+class Zadanie:
+    def __init__(self, zadanie_w_kratce):
+        self.id = zadanie_w_kratce.id
+        self.status = zadanie_w_kratce.status
+        self.priorytet = zadanie_w_kratce.priorytet
+        self.admin = zadanie_w_kratce.admin
+        self.tytul = zadanie_w_kratce.tytul
+        self.opis = zadanie_w_kratce.opis
+        self.data_utworzenia = datetime.datetime.strptime(zadanie_w_kratce.data_utworzenia, "%Y-%m-%d %H:%M:%S.%f")
+        self.deadline = datetime.datetime.strptime(zadanie_w_kratce.deadline, "%Y-%m-%d %H:%M:%S.%f")
+
 
 class BazaDanych:
 
@@ -87,4 +102,17 @@ class BazaDanych:
                 return f'Nie istnieje takiego prioryteta, jak "{priorytet}"'
             else:
                 return 'Problem wewnętrzny, sorky'
+    
+    def daj_zadania(self, login, predykat):
+        sql = """--sql 
+            SELECT z.id, s.status, p.priorytet, z.admin, z.tytul, z.opis, z.data_utworzenia, z.deadline
+            FROM Zadania z 
+                INNER JOIN Priorytety p ON p.id = z.priorytet
+                INNER JOIN Statusy s ON s.id = z.status
+            WHERE z.uzytkownik = ?;"""
+        cursor = self.bd.cursor()
+        cursor.execute(sql, (login,))
+        zadania = [Zadanie(t) for t in list(map(ZadanieKratka._make, cursor.fetchall()))]
+        zadania = list(filter(predykat, zadania))
+        return zadania
         
