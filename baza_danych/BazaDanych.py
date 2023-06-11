@@ -44,7 +44,7 @@ class BazaDanych:
             return None
 
     def __uzytkownik_o_takim_loginie(self, login):
-        sql = "SELECT * FROM Uzytkownicy WHERE login = ?;" 
+        sql = "SELECT * FROM Uzytkownicy WHERE [login] = ?;" 
         login = (login,)
         cursor = self.bd.cursor()
         cursor.execute(sql, login)
@@ -57,7 +57,7 @@ class BazaDanych:
             return user[0]
         
     def admin_o_takim_loginie(self, login):
-        sql = "SELECT * FROM Adminy WHERE login = ?;"
+        sql = "SELECT * FROM Adminy WHERE [login] = ?;"
         login = (login,)
         cursor = self.bd.cursor()
         cursor.execute(sql, login)
@@ -69,7 +69,7 @@ class BazaDanych:
         else:
             return admin[0][0]
     
-    def dodaj_admina(self, login, login_nowego_admina, ):
+    def dodaj_admina(self, login, login_nowego_admina):
         if(login != self.admin_o_takim_loginie(login)):
             return "Nie masz uprawnień do dodawania nowych adminów: nie jesteś adminem"
         if(login_nowego_admina != self.__uzytkownik_o_takim_loginie(login_nowego_admina)[0]):
@@ -83,6 +83,7 @@ class BazaDanych:
         if(c.rowcount == 1):
             return f"Użutkownik '{login_nowego_admina}' został adminem"
         else:
+            self.bd.rollback()
             return f"Węwnętrzny problem, użutkownik '{login_nowego_admina}' nie został adminem"
 
     def usun_zadanie(self,id):
@@ -125,8 +126,15 @@ class BazaDanych:
                 return f'Nie istnieje takiego statusa, jak "{status}"'
             elif("Zadania.priorytet" in e.args[0]):
                 return f'Nie istnieje takiego prioryteta, jak "{priorytet}"'
+            elif("Zadania.data_utworzenia" in e.args[0]):
+                return f'Nie poprawny format czasu w dacie utworzenia: "{zadanie.data_utworzenia}"'
+            elif("Zadania.deadline" in e.args[0]):
+                return f'Nie poprawny format czasu w końcowym terminie: "{zadanie.deadline}"'
             else:
                 return 'Problem wewnętrzny, sorky'
+        except:
+            self.bd.rollback()
+            return 'Problem wewnętrzny, sorky'
     
     def daj_zadania(self, login, sortowanie = lambda a,b: True if(a.tytul>=b.tytul) else False,predykat = None ):
         sql = """--sql 
@@ -148,4 +156,50 @@ class BazaDanych:
         self.bd.commit()
         cursor.close()
         return zadania
-        
+
+    def edytuj_zadanie(self, zadanie):
+        try:
+            sql = """
+            UPDATE Zadania 
+            SET [status] = ?,
+                priorytet = ?,
+                [admin] = ?,
+                tytul = ?,
+                opis = ?,
+                data_utworzenia = ?,
+                deadline = ?
+            WHERE id = ?
+            ;"""
+            zadanie_kratka = (zadanie.status,
+                            zadanie.priorytet,
+                            zadanie.admin,
+                            zadanie.tytul,
+                            zadanie.opis,
+                            zadanie.data_utworzenia,
+                            zadanie.deadline,
+                            zadanie.id)
+            c = self.bd.execute(sql, zadanie_kratka)
+            self.bd.commit()
+            c.close()
+            if(c.rowcount == 1 ):
+                return f"Zadanie nr {zadanie.id} zostało zmienione, {c.rowcount}"
+            else:
+                self.bd.rollback()
+                return f"Zadanie nr {zadanie.id} nie udało się zmienić, {c.rowcount}"
+        except sqlite3.IntegrityError as e:
+            self.bd.rollback()
+            if('Zadania.status' in e.args[0]):
+                return f'Nie istnieje takiego statusa, jak "{zadanie.status}"'
+            elif("Zadania.priorytet" in e.args[0]):
+                return f'Nie istnieje takiego prioryteta, jak "{zadanie.priorytet}"'
+            elif("Zadania.admin" in e.args[0]):
+                return f'Nie istnieje takiego admina, jak "{zadanie.admin}"'
+            elif("Zadania.data_utworzenia" in e.args[0]):
+                return f'Nie poprawny format czasu w dacie utworzenia: "{zadanie.data_utworzenia}"'
+            elif("Zadania.deadline" in e.args[0]):
+                return f'Nie poprawny format czasu w końcowym terminie: "{zadanie.deadline}"'
+            else:
+                return 'Problem wewnętrzny, sorky'
+        except:
+            self.bd.rollback()
+            return 'Problem wewnętrzny, sorky'
