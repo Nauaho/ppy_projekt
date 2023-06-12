@@ -161,8 +161,8 @@ class BazaDanych:
         try:
             sql = """
             UPDATE Zadania 
-            SET [status] = ?,
-                priorytet = ?,
+            SET [status] = (SELECT id FROM Statusy WHERE status = ?),
+                [priorytet] = (SELECT id FROM Priorytety WHERE priorytet = ?),
                 [admin] = ?,
                 tytul = ?,
                 opis = ?,

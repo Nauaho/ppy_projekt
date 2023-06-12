@@ -34,6 +34,12 @@ zadania = (
     ( None, 3, 2, 'admin', None, 'Kupić nową koszulkę', 'Kupić fajną koszulkę z Pink Floyd',datetime.datetime.now(), datetime.datetime.now() + datetime.timedelta(weeks=4)))
 
 def seed(bd):
+    # check = "SELECT Count(*) FROM Zadania;"
+    # cursor = bd.execute(check)
+    # if( int(cursor.fetchall()[0]) > 0 ):
+    #     bd.commit()
+    #     cursor.close()
+    #     return
     for u in uzytkownicy:
         bd.execute("INSERT INTO Uzytkownicy VALUES (?,?,?);", 
                    hasher.uzytkownik_sol_i_haslo(u[0], u[1]))
