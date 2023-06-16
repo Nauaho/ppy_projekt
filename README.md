@@ -15,5 +15,9 @@ Zwykły projekt bazo-danowy na Python i sqlite3
     - [ ] Użytkownik powinien móc wybierać różne opcje, takie jak dodawanie zadania, wyświetlanie, edycję, usuwanie, a także wyjście z aplikacji.
 6)  - [x] Aplikacja powinna obsługiwać błędy, takie jak podanie nieprawidłowego identyfikatora zadania lub niewłaściwej opcji menu.
     - [ ] Użytkownik powinien otrzymywać odpowiednie komunikaty o błędach.
+7)  - [x] Aplikacja powinna umożliwiać dodawanie i usuwanie uorawnień admina u użytkownika
+8)  - [x] Aplikacja powinna umożliwiać przypisywać zadania innym użytkownikom
 
 ### Schemat bazy danych
+
+<img alt="Prosciutka baza danych sqlite3 do przechowywania zadań" src="/MetaDane/Schemat_Bd.png">
