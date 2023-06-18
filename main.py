@@ -43,6 +43,7 @@ while dziala:
               "Wyloguj - jeżeli chciał byś się wylogować")
         if admin:
             print("Dodaj admina - jeżeli chciał byś dodać nowego administratora")
+            print("Przypisz zadanie - jeżeli chciał byś przypisać zadanie użytkownikowie")
         odp = input("Proszę wpisać wybraną odpowiedź poniżej:\n")
 
         if odp == "Usuń":
@@ -132,6 +133,24 @@ while dziala:
         elif odp == "Dodaj admina":
             nowyAdmin = input("Podaj login nowego administratora:\n")
             doWyswietlenia = db.dodaj_admina(login, nowyAdmin)
+            print(doWyswietlenia)
+        elif odp == "Przypisz zadanie":
+            uzytkownik = input("Podaj nazwę użytkownika:\n")
+            tytul = input("Proszę wpisać tytuł zadania:\n")
+            opis = input("Poreszę wpisac opis zadania:\n")
+            status = input("Podaj status (w trakcie/zakończone)(jeżeli chcesz zostawić status do zrobienia naciśnij Enter):\n") or "do zrobienia"
+            priorytet = input("Podaj priorytet (nizki/wysoki)(jeżeli chcesz zostawić priorytet średni naciśnij Enter):\n") or "średni"
+            deadline = datetime.datetime.now() + datetime.timedelta(days=1)
+            wybor = input("Jeżeli chciał byś przpisać inną datę zakończenia niż jutro, napisz tak:\n")
+            if wybor == "tak":
+                deadline = None
+                while deadline is None:
+                    try:
+                        dni = int(input("Wpisz liczbę dni:\n"))
+                        deadline = datetime.datetime.now() + datetime.timedelta(days=dni)
+                    except ValueError:
+                        print("Nie została wprowadzona liczba całkowita.")
+            doWyswietlenia = db.dodaj_zadanie(uzytkownik, tytul, opis, login, status, priorytet, deadline=deadline)
             print(doWyswietlenia)
         else:
             print("Podano nie właściwą komendę proszę spróbować ponownie.")
