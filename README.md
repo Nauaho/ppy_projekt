@@ -11,10 +11,10 @@ Zwykły projekt bazo-danowy na Python i sqlite3
     - [x] Użytkownik powinien móc zmieniać tytuł, opis, status i inne atrybuty zadań.
 4)  - [x] Aplikacja powinna umożliwiać usuwanie zadań. 
     - [x] Użytkownik powinien móc wybrać zadanie do usunięcia na podstawie identyfikatora.
-5)  - [ ] Aplikacja powinna zapewniać interaktywny interfejs w konsoli. 
-    - [ ] Użytkownik powinien móc wybierać różne opcje, takie jak dodawanie zadania, wyświetlanie, edycję, usuwanie, a także wyjście z aplikacji.
+5)  - [x] Aplikacja powinna zapewniać interaktywny interfejs w konsoli. 
+    - [x] Użytkownik powinien móc wybierać różne opcje, takie jak dodawanie zadania, wyświetlanie, edycję, usuwanie, a także wyjście z aplikacji.
 6)  - [x] Aplikacja powinna obsługiwać błędy, takie jak podanie nieprawidłowego identyfikatora zadania lub niewłaściwej opcji menu.
-    - [ ] Użytkownik powinien otrzymywać odpowiednie komunikaty o błędach.
+    - [x] Użytkownik powinien otrzymywać odpowiednie komunikaty o błędach.
 7)  - [x] Aplikacja powinna umożliwiać dodawanie i usuwanie uorawnień admina u użytkownika
 8)  - [x] Aplikacja powinna umożliwiać przypisywać zadania innym użytkownikom
 
